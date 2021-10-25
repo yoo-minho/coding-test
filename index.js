@@ -20,6 +20,8 @@ function solution2(n) {
      2. 이진법수 = 1001, 전체자리수 : 4, 1의개수 : 2
      3. 전체자리수 - 1 = 세자리의 1의개수가 2개인 경우 => 3C2 (수학 조합)
      4. 네자리수의 2개인 경우 => ?
+
+     1001(2) 보다 작은 이진수 중에서 찾아야하나?
      */
     var digits = n.toString(2).length;
     var count = getBinaryNumberCount(n); //자연수n의 이진법 1의 개수
