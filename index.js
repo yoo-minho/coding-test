@@ -3,76 +3,121 @@ console.log(solution(99));
 console.log(solution(999));
 console.log(solution(9999));
 console.log(solution(99999));
+console.log(solution(100));
 
-function solution(n){
-    return solution1(n) + "/" + solution2(n);
+function solution(n) {
+    //return solution1(n); //효율성테스트 통과하지 못함
+    return solution2(n); //효율성테스트 통과
 }
 
 function solution1(n) {
-    var count = getBinaryNumberCount(n);
+    const count = getBinaryNumberCount(n);
     return getArray(n).filter(v => count === getBinaryNumberCount(v)).length;
 }
 
 function solution2(n) {
 
-    /**
-     1. n = 9
-     2. 이진법수 = 1001, 전체자리수 : 4, 1의개수 : 2
-     3. 전체자리수 - 1 = 세자리의 1의개수가 2개인 경우 => 3C2 (수학 조합)
-     4. 네자리수의 2개인 경우 => ?
+    //n - 본래 자연수, n2 - n을 이진수화한 수
+    const getZeros = (n) => getArray(n).map(() => "0").join("");
+    const getLastOneIndex = (n2) => n2.length - String(n2).lastIndexOf(1) - 1;
+    const getBinaryNumberCount = (n2) => n2.match(/1/g) && n2.match(/1/g).length;
 
-     1001(2) 보다 작은 이진수 중에서 찾아야하나?
-     */
-    var digits = n.toString(2).length;
-    var count = getBinaryNumberCount(n); //자연수n의 이진법 1의 개수
+    const n2 = n.toString(2);
+    const binaryNumberCount = getBinaryNumberCount(n2); //자연수 n의 이진법 1의 개수
+    var zeroStartCaseCount = getCombinationsCount(n2.length - 1, binaryNumberCount); //0으로 시작하는 동일한 자리수 경우
+    var oneStartCaseCount = getOneStartLessThanN(n); //1로 시작하는 동일한 자리수 경우
+    return zeroStartCaseCount + oneStartCaseCount;
 
-    var num1 = getCombinationsCount(digits - 1, count);
-    var num2 = getCombinationsCount(digits, count - 1); //이중에 걸러야하는데,,
-    return num1 + num2 + "/" + n.toString(2);
+    function getOneStartLessThanN() {
+        let _n2 = String(n2);
+        let count = 0;
+        for (var i = 0; i < binaryNumberCount - 1; i++) {
+            count += getCombinationsCount(getLastOneIndex(_n2), i + 1);
+            var temp = _n2.substring(0, _n2.lastIndexOf(1));
+            _n2 = temp + getZeros(_n2.length - temp.length);
+        }
+        return count;
+    }
+
+    function getCombinationsCount(totalNumber, selectNumber) {
+        var numerator = [];
+        var denominator = [];
+        for (var i = 0; i < selectNumber; i++) {
+            numerator.push(totalNumber - i);
+            denominator.push(selectNumber - i);
+        }
+        return (numerator.reduce((a, b) => a * b)) / (denominator.reduce((a, b) => a * b));
+    }
+}
+
+function getBinaryNumberCount(n2) {
+    const mat = n2.match(/1/g);
+    return n2.match(/1/g) && n2.match(/1/g).length;
 }
 
 function getArray(length) {
-    return Array.from({length}, (v, i) => i)
+    return Array.from({length}, (v, i) => i);
 }
 
-function getMax(_digits, _count) {
-    var _max = 0;
-    var _digits = digits - 1;
-    for (var i = 0; i < _count; i++) {
-        _max += 2 ** (_digits - 1);
-        _digits = _digits - 1;
+/**
+ *
+ * function solution(n) {
+    //return solution1(n);
+    return solution2(n);
+}
+
+ function solution2(n) {
+    var digits = n.toString(2).length;
+    var count = getBinaryNumberCount(n); //자연수n의 이진법 1의 개수
+    var zeroStart = getCombinationsCount(digits - 1, count); //0으로 시작하는 동일한 자리수 경우
+    var small = count222(n);
+    return zeroStart + small;
+}
+
+ function solution1(n) {
+    var count = getBinaryNumberCount(n);
+    return getArray(n).filter(v => count === getBinaryNumberCount(v)).length;
+}
+
+ function getBinaryNumberCount(v) {
+    const mat = v.toString(2).match(/1/g);
+    return mat && mat.length;
+}
+
+ function getArray(length) {
+    return Array.from({length}, (v, i) => i);
+}
+
+ function count222(number) {
+    var _num2 = String(number.toString(2));
+    var count = getBinaryNumberCount(number); //자연수n의 이진법 1의 개수
+    var ttCount = 0;
+    for (var i = 0; i < count - 1; i++) {
+        ttCount += getCombinationsCount(findIndex(_num2), i + 1);
+        var temp = _num2.substring(0, _num2.lastIndexOf(1));
+        _num2 = temp + getZero(_num2.length - temp.length);
     }
-    return _max;
+    return ttCount;
+
+    function getZero(n) {
+    return getArray(n).map(() => "0").join("");
 }
 
-function getBinaryNumberCount(v) {
-    return v.toString(2).match(/1/g)?.length;
+function findIndex(num2){
+    num2 = String(num2)
+    var digits = num2.length;
+    return digits - num2.lastIndexOf(1) - 1;
+}
 }
 
-function getCombinationsCount(totalNumber, selectNumber) {
-    //3C2
-    var a = totalNumber;
-    var b = selectNumber;
-    var result = 1;
+ function getCombinationsCount(totalNumber, selectNumber) {
+    var numerator = [];
+    var denominator = [];
     for (var i = 0; i < selectNumber; i++) {
-        result = result * (a / b);
-        a = a - 1;
-        b = b - 1;
+        numerator.push(totalNumber - i);
+        denominator.push(selectNumber - i);
     }
-    return result;
-    //return getCombinations(Array.from({length:totalNumber}, (v,i) => i), selectNumber).length;
+    return (numerator.reduce((a, b) => a * b)) / (denominator.reduce((a, b) => a * b));
 }
+ */
 
-function getCombinations(array, selectNumber) {
-    const results = [];
-    if (selectNumber === 1) {
-        return array.map((element) => [element]);
-    }
-    array.forEach((fixed, index, origin) => {
-        const rest = origin.slice(index + 1);
-        const combinations = getCombinations(rest, selectNumber - 1);
-        const attached = combinations.map((combination) => [fixed, ...combination]);
-        results.push(...attached);
-    });
-    return results;
-}
