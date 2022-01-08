@@ -24,6 +24,14 @@ function solution1(n) {
     return getArray(n).filter(v => count === getBinaryNumberCount(v.toString(2))).length;
 }
 
+//예를 들어, 11001100 이라면,
+//1) 0으로 시작하고 7자리 애들 중에 1이 4개인거 찾으면 됨 7C4
+//2) 1로 시작하고 7자리 애들 중에서 1이 3개인거 찾으면 되는데
+//3) 11001100 이니까 110010XX 에서 XX 자리에 1이 1개 들어가면 되는 케이스니 2C1
+//4) 11001000 이니까 11000XXX 에서 XXX 자리에 1이 2개 들어가면 되는 케이스니 3C2
+//5) 11000000 이니까 10XXXXXX 에서 XXXXXX 자리에 1이 3개 들어가면 되는 케이스니 6C3
+//6) 이걸 다 더하면 됨
+
 function solution2(n) {
 
     //n - 본래 자연수, n2 - n을 이진수화한 수
